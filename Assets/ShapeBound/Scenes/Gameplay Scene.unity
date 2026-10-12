@@ -13369,6 +13369,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 5413614582736693110, guid: d931766863583cd488e1f759f9b4e38c, type: 3}
+      propertyPath: maxSpin
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5413614582736693110, guid: d931766863583cd488e1f759f9b4e38c, type: 3}
+      propertyPath: maxUpwardBounceVelocity
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 7685023730595888013, guid: d931766863583cd488e1f759f9b4e38c, type: 3}
       propertyPath: shapeFormUI
       value: 
