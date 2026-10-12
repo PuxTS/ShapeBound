@@ -171,6 +171,16 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""initialStateCheck"": false,
                     ""priority"": 0
+                },
+                {
+                    ""name"": ""SwitchCam"",
+                    ""type"": ""Button"",
+                    ""id"": ""ca874e09-1f1c-4bbb-839e-2b43a508a756"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false,
+                    ""priority"": 0
                 }
             ],
             ""bindings"": [
@@ -210,7 +220,7 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
                 {
                     ""name"": ""negative"",
                     ""id"": ""38f5cd4f-d0ff-458c-b146-cbf98d10c206"",
-                    ""path"": ""<Keyboard>/s"",
+                    ""path"": ""<Keyboard>/w"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -221,7 +231,7 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
                 {
                     ""name"": ""positive"",
                     ""id"": ""47a699ed-6562-49ec-9094-14940f5e4ebf"",
-                    ""path"": ""<Keyboard>/w"",
+                    ""path"": ""<Keyboard>/s"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -305,6 +315,17 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
                     ""action"": ""Move"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ccdd5fb1-307c-4fc2-9c44-a4884e71c2cd"",
+                    ""path"": ""<Keyboard>/v"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SwitchCam"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -321,6 +342,7 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
         m_Player_ShiftCircle = m_Player.FindAction("ShiftCircle", throwIfNotFound: true);
         m_Player_ShiftBox = m_Player.FindAction("ShiftBox", throwIfNotFound: true);
         m_Player_ShiftSpike = m_Player.FindAction("ShiftSpike", throwIfNotFound: true);
+        m_Player_SwitchCam = m_Player.FindAction("SwitchCam", throwIfNotFound: true);
     }
 
     ~@PlayerControl()
@@ -409,6 +431,7 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_ShiftCircle;
     private readonly InputAction m_Player_ShiftBox;
     private readonly InputAction m_Player_ShiftSpike;
+    private readonly InputAction m_Player_SwitchCam;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -452,6 +475,10 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player/ShiftSpike".
         /// </summary>
         public InputAction @ShiftSpike => m_Wrapper.m_Player_ShiftSpike;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/SwitchCam".
+        /// </summary>
+        public InputAction @SwitchCam => m_Wrapper.m_Player_SwitchCam;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -502,6 +529,9 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
             @ShiftSpike.started += instance.OnShiftSpike;
             @ShiftSpike.performed += instance.OnShiftSpike;
             @ShiftSpike.canceled += instance.OnShiftSpike;
+            @SwitchCam.started += instance.OnSwitchCam;
+            @SwitchCam.performed += instance.OnSwitchCam;
+            @SwitchCam.canceled += instance.OnSwitchCam;
         }
 
         /// <summary>
@@ -537,6 +567,9 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
             @ShiftSpike.started -= instance.OnShiftSpike;
             @ShiftSpike.performed -= instance.OnShiftSpike;
             @ShiftSpike.canceled -= instance.OnShiftSpike;
+            @SwitchCam.started -= instance.OnSwitchCam;
+            @SwitchCam.performed -= instance.OnSwitchCam;
+            @SwitchCam.canceled -= instance.OnSwitchCam;
         }
 
         /// <summary>
@@ -633,5 +666,12 @@ public partial class @PlayerControl: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnShiftSpike(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "SwitchCam" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSwitchCam(InputAction.CallbackContext context);
     }
 }

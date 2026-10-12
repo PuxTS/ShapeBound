@@ -7,18 +7,27 @@ public class Shapeshifter : MonoBehaviour
     [Header("Parent Colliders")]
     [SerializeField] private CircleCollider2D circleCollider;
     [SerializeField] private BoxCollider2D boxCollider;
-    [SerializeField] private PolygonCollider2D spikeCollider;
+    [SerializeField] private BoxCollider2D spikeCollider;
 
     [Header("Child Visual GameObjects")]
     [SerializeField] private GameObject circleVisual;
     [SerializeField] private GameObject boxVisual;
     [SerializeField] private GameObject spikeVisual;
 
-    public ShapeForm CurrentForm { get; private set; } = ShapeForm.Circle;
+    [Header("UI Reference")]
+    [SerializeField] private ShapeFormUI shapeFormUI; // Added reference
+
+    [Header("State")]
+    [SerializeField] private ShapeForm currentForm = ShapeForm.Circle;
+    public ShapeForm CurrentForm => currentForm;
     public bool CanShift { get; set; } = true;
 
     private void Start()
     {
+        // If UI reference isn't assigned, auto-find it in the scene
+        if (shapeFormUI == null)
+            shapeFormUI = FindAnyObjectByType<ShapeFormUI>();
+
         // Set default initial shape on start (Circle)
         SetShape(1);
     }
@@ -40,7 +49,7 @@ public class Shapeshifter : MonoBehaviour
 
     private void SetShapeInternal(ShapeForm form)
     {
-        CurrentForm = form;
+        currentForm = form;
 
         // Disable all physics colliders on root
         if (circleCollider != null) circleCollider.enabled = false;
@@ -67,6 +76,12 @@ public class Shapeshifter : MonoBehaviour
                 if (spikeCollider != null) spikeCollider.enabled = true;
                 if (spikeVisual != null) spikeVisual.SetActive(true);
                 break;
+        }
+
+        // Update the UI representation
+        if (shapeFormUI != null)
+        {
+            shapeFormUI.UpdateActiveShape(CurrentForm);
         }
     }
 

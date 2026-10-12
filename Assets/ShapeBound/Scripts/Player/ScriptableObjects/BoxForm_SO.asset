@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5619a1a8c258fa4c9ca5b68a6b75a9b, type: 3}
+  m_Name: BoxForm_SO
+  m_EditorClassIdentifier: Assembly-CSharp::FormData
+  form: 2
+  launchForceMultiplier: 0.65
+  groundDamping: 4
+  airDamping: 0.05
+  dampOnlyWhenSettled: 0
+  material: {fileID: 6200000, guid: 4062b30983fcf3b4cb115105e8560ddc, type: 2}
+  usesSpin: 0
+  freePhysicsRotation: 1
+  keepSlideWhenIdle: 1

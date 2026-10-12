@@ -14,6 +14,7 @@ public class InputReader : MonoBehaviour, PlayerControl.IPlayerActions
     public event Action<float> OnMoveEvent;
     public event Action OnResetSpinEvent;
     public event Action<int> OnShapeShiftEvent; // 1 = Circle, 2 = Box, 3 = Spike
+    public event Action OnToggleCameraEvent;   // Fired when SwitchCam is pressed
 
     public Vector2 AimScreenPosition { get; private set; }
     public float SpinInput { get; private set; }
@@ -80,5 +81,11 @@ public class InputReader : MonoBehaviour, PlayerControl.IPlayerActions
     public void OnShiftSpike(InputAction.CallbackContext context)
     {
         if (context.started) OnShapeShiftEvent?.Invoke(3);
+    }
+
+    // Callback for the 'SwitchCam' action in your Input Action Asset
+    public void OnSwitchCam(InputAction.CallbackContext context)
+    {
+        if (context.started) OnToggleCameraEvent?.Invoke();
     }
 }

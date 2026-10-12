@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5619a1a8c258fa4c9ca5b68a6b75a9b, type: 3}
+  m_Name: CircleForm_SO
+  m_EditorClassIdentifier: Assembly-CSharp::FormData
+  form: 1
+  launchForceMultiplier: 1
+  groundDamping: 2
+  airDamping: 0.05
+  dampOnlyWhenSettled: 1
+  material: {fileID: 6200000, guid: 25019cae83ae631478d5b76cfb60a0c9, type: 2}
+  usesSpin: 1
+  freePhysicsRotation: 0
+  keepSlideWhenIdle: 0

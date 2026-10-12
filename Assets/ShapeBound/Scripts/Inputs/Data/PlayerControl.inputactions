@@ -85,6 +85,16 @@
                     "interactions": "",
                     "initialStateCheck": false,
                     "priority": 0
+                },
+                {
+                    "name": "SwitchCam",
+                    "type": "Button",
+                    "id": "ca874e09-1f1c-4bbb-839e-2b43a508a756",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
                 }
             ],
             "bindings": [
@@ -124,7 +134,7 @@
                 {
                     "name": "negative",
                     "id": "38f5cd4f-d0ff-458c-b146-cbf98d10c206",
-                    "path": "<Keyboard>/s",
+                    "path": "<Keyboard>/w",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -135,7 +145,7 @@
                 {
                     "name": "positive",
                     "id": "47a699ed-6562-49ec-9094-14940f5e4ebf",
-                    "path": "<Keyboard>/w",
+                    "path": "<Keyboard>/s",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -219,6 +229,17 @@
                     "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "ccdd5fb1-307c-4fc2-9c44-a4884e71c2cd",
+                    "path": "<Keyboard>/v",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SwitchCam",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         }
