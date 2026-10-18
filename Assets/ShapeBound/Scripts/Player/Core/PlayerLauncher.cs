@@ -38,8 +38,10 @@ public class PlayerLauncher : MonoBehaviour
     [Tooltip("After a launch, the player must stay at rest this long before walking is allowed again.")]
     [SerializeField] private float stableTimeRequired = 0.25f;
 
-    [Header("Gizmo Settings")]
+    [Header("Trajectory Prediction")]
+    [Tooltip("Scene-view gizmo only. The in-game arc is controlled on PlayerAimLine.")]
     [SerializeField] private bool showTrajectory = true;
+    [Tooltip("How many physics steps ahead to predict. More steps = a longer arc (60 steps is about 1.2 seconds of flight).")]
     [SerializeField] private int trajectorySteps = 60;
 
     [Header("State & Debugging")]
@@ -58,9 +60,11 @@ public class PlayerLauncher : MonoBehaviour
     private InputReader input;
     private PlayerGroundCheck ground;
     private PlayerFormHandler form;
+    private PlayerWallStick wallStick; // optional: only present if the player has the wall-stick module
     private Camera mainCam;
 
     private float stableTimer;
+    private Vector3[] gizmoPoints;
 
     private void Awake()
     {
@@ -68,12 +72,16 @@ public class PlayerLauncher : MonoBehaviour
         input = GetComponent<InputReader>();
         ground = GetComponent<PlayerGroundCheck>();
         form = GetComponent<PlayerFormHandler>();
+        wallStick = GetComponent<PlayerWallStick>();
         mainCam = Camera.main;
     }
 
+    // You can launch from the ground, or while stuck to a wall/ceiling
+    private bool CanLaunchFromHere => ground.IsGrounded || (wallStick != null && wallStick.IsStuck);
+
     public void StartCharging()
     {
-        if (ground.IsGrounded && rb.linearVelocity.magnitude <= stoppedVelocityThreshold)
+        if (CanLaunchFromHere && rb.linearVelocity.magnitude <= stoppedVelocityThreshold)
         {
             IsCharging = true;
             rb.linearVelocity = Vector2.zero;
@@ -88,7 +96,7 @@ public class PlayerLauncher : MonoBehaviour
 
     public void ExecuteLaunch()
     {
-        if (!ground.IsGrounded || !IsCharging) return;
+        if (!CanLaunchFromHere || !IsCharging) return;
         if (!TryGetAim(out AimInfo aim)) return;
 
         IsCharging = false;
@@ -142,8 +150,57 @@ public class PlayerLauncher : MonoBehaviour
         FormData data = form != null ? form.CurrentFormData : null;
         float multiplier = data != null ? data.launchForceMultiplier : 1f;
 
-        aim = new AimInfo(rawVector.normalized, rawVector, clampedDistance, baseForce * multiplier, chargePercent);
+        // Spike: each wall stick used reduces launch power (100% -> 50% -> 25%)
+        float stickMultiplier = wallStick != null ? wallStick.LaunchMultiplier : 1f;
+
+        aim = new AimInfo(rawVector.normalized, rawVector, clampedDistance, baseForce * multiplier * stickMultiplier, chargePercent);
         return true;
+    }
+
+    /// <summary>How big the points array passed to PredictTrajectory should be.</summary>
+    public int MaxTrajectoryPoints => Mathf.Max(2, trajectorySteps + 1);
+
+    /// <summary>
+    /// Predicts the flight path of a launch with the given aim, using the same order Box2D uses:
+    /// gravity, damping, then move. Fills 'points' and returns how many were written (at least 2).
+    /// Stops at the first ground hit. Does not simulate bounces or spin impulses.
+    /// </summary>
+    public int PredictTrajectory(AimInfo aim, Vector3[] points, out bool hitGround)
+    {
+        hitGround = false;
+
+        float dt = Time.fixedDeltaTime;
+        Vector2 gravity = Physics2D.gravity * rb.gravityScale;
+        FormData data = form != null ? form.CurrentFormData : null;
+        float airDamping = data != null ? data.airDamping : 0f;
+
+        // Impulse -> velocity: v = impulse / mass (ExecuteLaunch zeroes velocity first)
+        Vector2 pos = transform.position;
+        Vector2 vel = aim.Direction * aim.Force / rb.mass;
+
+        int maxPoints = Mathf.Min(points.Length, MaxTrajectoryPoints);
+        int count = 0;
+        points[count++] = pos;
+
+        while (count < maxPoints)
+        {
+            vel += gravity * dt;
+            vel *= 1f / (1f + dt * airDamping);
+            Vector2 next = pos + vel * dt;
+
+            RaycastHit2D hit = Physics2D.Linecast(pos, next, ground.GroundLayer);
+            if (hit.collider != null)
+            {
+                points[count++] = hit.point;
+                hitGround = true;
+                break;
+            }
+
+            points[count++] = next;
+            pos = next;
+        }
+
+        return count;
     }
 
     // ---------------- Gizmos ----------------
@@ -190,41 +247,23 @@ public class PlayerLauncher : MonoBehaviour
 
         if (showTrajectory)
         {
-            // Impulse -> velocity: v = impulse / mass (ExecuteLaunch zeroes velocity first)
-            DrawTrajectory(playerPos, aim.Direction * aim.Force / rb.mass, chargeColor);
-        }
-    }
-
-    // Predicts the flight path using the same order Box2D uses: gravity, damping, then move.
-    // Stops at the first ground hit. Does not simulate bounces or spin impulses.
-    private void DrawTrajectory(Vector2 startPos, Vector2 startVelocity, Color color)
-    {
-        float dt = Time.fixedDeltaTime;
-        Vector2 gravity = Physics2D.gravity * rb.gravityScale;
-        FormData data = form != null ? form.CurrentFormData : null;
-        float airDamping = data != null ? data.airDamping : 0f;
-
-        Vector2 pos = startPos;
-        Vector2 vel = startVelocity;
-
-        Gizmos.color = color;
-
-        for (int i = 0; i < trajectorySteps; i++)
-        {
-            vel += gravity * dt;
-            vel *= 1f / (1f + dt * airDamping);
-            Vector2 next = pos + vel * dt;
-
-            RaycastHit2D hit = Physics2D.Linecast(pos, next, ground.GroundLayer);
-            if (hit.collider != null)
+            if (gizmoPoints == null || gizmoPoints.Length != MaxTrajectoryPoints)
             {
-                Gizmos.DrawLine(pos, hit.point);
-                Gizmos.DrawWireSphere(hit.point, 0.1f);
-                break;
+                gizmoPoints = new Vector3[MaxTrajectoryPoints];
             }
 
-            Gizmos.DrawLine(pos, next);
-            pos = next;
+            int count = PredictTrajectory(aim, gizmoPoints, out bool hitGround);
+
+            Gizmos.color = chargeColor;
+            for (int i = 0; i < count - 1; i++)
+            {
+                Gizmos.DrawLine(gizmoPoints[i], gizmoPoints[i + 1]);
+            }
+
+            if (hitGround)
+            {
+                Gizmos.DrawWireSphere(gizmoPoints[count - 1], 0.1f);
+            }
         }
     }
 }

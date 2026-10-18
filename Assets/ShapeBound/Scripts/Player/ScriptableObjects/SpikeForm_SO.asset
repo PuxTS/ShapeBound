@@ -21,3 +21,4 @@ MonoBehaviour:
   usesSpin: 0
   freePhysicsRotation: 1
   keepSlideWhenIdle: 1
+  canWallStick: 1

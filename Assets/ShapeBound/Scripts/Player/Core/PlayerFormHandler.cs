@@ -14,14 +14,17 @@ public class PlayerFormHandler : MonoBehaviour
 
     public FormData CurrentFormData { get; private set; }
 
+    /// <summary>Fires after the player switches form (also once at start).</summary>
     public event Action<ShapeForm> OnFormChanged;
 
     private Shapeshifter shapeSystem;
+    private PlayerLauncher launcher;
     private Dictionary<ShapeForm, FormData> formLookup;
 
     private void Awake()
     {
         shapeSystem = GetComponent<Shapeshifter>();
+        launcher = GetComponent<PlayerLauncher>();
 
         formLookup = new Dictionary<ShapeForm, FormData>();
         foreach (FormData data in forms)
@@ -39,6 +42,7 @@ public class PlayerFormHandler : MonoBehaviour
         SwitchForm(startForm);
     }
 
+    // No PlayerData_Manager in the scene means no restrictions
     public bool IsFormUnlocked(ShapeForm form)
     {
         return PlayerData_Manager.Instance == null || PlayerData_Manager.Instance.PlayerData.IsUnlocked(form);
@@ -54,6 +58,10 @@ public class PlayerFormHandler : MonoBehaviour
 
         // Respect the player data: locked forms can't be switched to
         if (!IsFormUnlocked(newForm))
+            return;
+
+        // Can't change shape while aiming a launch
+        if (launcher != null && launcher.IsCharging)
             return;
 
         shapeSystem.SetShape(newForm);

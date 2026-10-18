@@ -25,4 +25,6 @@ public class FormData : ScriptableObject
     public bool freePhysicsRotation = false;
     [Tooltip("Box: don't stop dead when there is no move input.")]
     public bool keepSlideWhenIdle = false;
+    [Tooltip("Spike: sticks to walls and ceilings when it hits them in the air (needs PlayerWallStick on the player).")]
+    public bool canWallStick = false;
 }

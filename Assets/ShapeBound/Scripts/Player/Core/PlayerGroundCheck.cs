@@ -22,6 +22,7 @@ public class PlayerGroundCheck : MonoBehaviour
     public Vector2 GroundNormal { get; private set; } = Vector2.up;
     public Vector2 GroundPoint { get; private set; }
     public LayerMask GroundLayer => groundLayer;
+    public float MinGroundNormalY => minGroundNormalY;
 
     /// <summary>Fires on the frame the player becomes grounded.</summary>
     public event Action Landed;
@@ -71,7 +72,9 @@ public class PlayerGroundCheck : MonoBehaviour
         groundLockUntil = Time.time + lockDuration;
     }
 
-    // Box/Spike: once grounded, stay grounded through brief contact loss (rocking, slope/floor junctions).
+    /// <param name="holdGroundedThroughJitter">
+    /// Box/Spike: once grounded, stay grounded through brief contact loss (rocking, slope/floor junctions).
+    /// </param>
     public void FixedTick(bool holdGroundedThroughJitter)
     {
         int count = rb.GetContacts(groundFilter, contactBuffer);
