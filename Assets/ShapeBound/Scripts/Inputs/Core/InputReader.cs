@@ -8,6 +8,7 @@ public class InputReader : MonoBehaviour, PlayerControl.IPlayerActions
 
     // Events for other scripts to subscribe to
     public event Action<Vector2> OnAimEvent;
+    public event Action OnInteractEvent;
     public event Action OnLaunchPressedEvent;
     public event Action OnLaunchReleasedEvent;
     public event Action<float> OnSpinEvent;
@@ -49,6 +50,11 @@ public class InputReader : MonoBehaviour, PlayerControl.IPlayerActions
     {
         AimScreenPosition = context.ReadValue<Vector2>();
         OnAimEvent?.Invoke(AimScreenPosition);
+    }
+
+    public void OnInteract(InputAction.CallbackContext context)
+    {
+        if (context.started) OnInteractEvent?.Invoke();
     }
 
     public void OnLaunch(InputAction.CallbackContext context)

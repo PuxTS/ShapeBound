@@ -17,6 +17,16 @@
                     "priority": 0
                 },
                 {
+                    "name": "Interact",
+                    "type": "Button",
+                    "id": "4212e24b-eefe-4517-be9a-bf8a425d6265",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
+                },
+                {
                     "name": "Aim",
                     "type": "Value",
                     "id": "f58226d6-cc2f-410a-90bc-d5ba43516891",
@@ -238,6 +248,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "SwitchCam",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "08cb539e-82b8-45f6-bc0f-4d1bfe2b4791",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Interact",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

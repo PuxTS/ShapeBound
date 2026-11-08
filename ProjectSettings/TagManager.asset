@@ -41,6 +41,33 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Backgrounds
+    uniqueID: 994451239
+    locked: 0
+  - name: Cave Background
+    uniqueID: 2534708339
+    locked: 0
+  - name: Cave
+    uniqueID: 138577637
+    locked: 0
+  - name: Oasis
+    uniqueID: 1649733817
+    locked: 0
+  - name: Pickup
+    uniqueID: 3413689981
+    locked: 0
+  - name: NPC Inside
+    uniqueID: 1785598607
+    locked: 0
+  - name: NPC Outside
+    uniqueID: 3578230405
+    locked: 0
+  - name: Player
+    uniqueID: 2631433741
+    locked: 0
+  - name: Text
+    uniqueID: 1877095587
+    locked: 0
   m_RenderingLayers:
   - Default
   m_MigratedRenderPipelines: []

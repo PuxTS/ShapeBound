@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using Unity.Cinemachine;
@@ -12,6 +13,9 @@ public class CameraZone : MonoBehaviour
     [Tooltip("Wait this long before treating 'all player colliders left' as a real exit. " +
              "Shape-shifting disables one collider and enables another, which fires Exit then Enter.")]
     [SerializeField] private float exitDelay = 0.1f;
+
+    // Static event so NPCs can listen to zone transitions anywhere in the scene
+    public static event Action<string> OnZoneEntered;
 
     public CinemachineCamera ZoneCamera { get; private set; }
     public int ZonePriority => zonePriority;
@@ -35,6 +39,10 @@ public class CameraZone : MonoBehaviour
         {
             playerColliderCount++;
             CameraManager.Instance.SetCurrentZone(this);
+
+            // Notify listeners (like NPCs) that we entered this zone (using parent transform name like "Zone 1.2")
+            string zoneName = transform.parent != null ? transform.parent.name : gameObject.name;
+            OnZoneEntered?.Invoke(zoneName);
         }
     }
 
@@ -52,7 +60,6 @@ public class CameraZone : MonoBehaviour
         {
             playerColliderCount = Mathf.Max(0, playerColliderCount - 1);
 
-            // Only consider leaving when ALL player colliders are gone, and confirm after a short delay
             if (playerColliderCount == 0 && pendingExit == null)
             {
                 pendingExit = StartCoroutine(ConfirmExit());
@@ -66,7 +73,6 @@ public class CameraZone : MonoBehaviour
 
         pendingExit = null;
 
-        // If a new collider entered in the meantime (a form switch), this was not a real exit
         if (playerColliderCount == 0)
         {
             Debug.Log($"[CameraZone] Player EXITED zone: {transform.parent.name}");
